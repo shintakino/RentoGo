@@ -15,37 +15,45 @@ const CardCompact = ({
   );
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-lg w-full flex h-40 mb-5">
-      <div className="relative w-1/3">
-        <Image
-          src={imgSrc}
-          alt={property.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          onError={() => setImgSrc("/placeholder.jpg")}
-        />
-        <div className="absolute bottom-2 left-2 flex gap-1 flex-col">
+    <div className="group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-lg transition-all duration-300 w-full flex h-44 mb-5">
+      {/* Image Section */}
+      <div className="relative w-2/5">
+        <div className="h-full w-full relative overflow-hidden">
+          <Image
+            src={imgSrc}
+            alt={property.name}
+            fill
+            className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => setImgSrc("/placeholder.jpg")}
+          />
+        </div>
+        
+        {/* Property Tags */}
+        <div className="absolute bottom-3 left-3 flex gap-1.5 flex-col">
           {property.isPetsAllowed && (
-            <span className="bg-white/80 text-black text-xs font-semibold px-2 py-1 rounded-full w-fit">
-              Pets
+            <span className="bg-white/95 backdrop-blur-sm text-primary-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-sm">
+              🐾 Pets
             </span>
           )}
           {property.isParkingIncluded && (
-            <span className="bg-white/80 text-black text-xs font-semibold px-2 py-1 rounded-full">
-              Parking
+            <span className="bg-white/95 backdrop-blur-sm text-primary-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-sm">
+              🚗 Parking
             </span>
           )}
         </div>
       </div>
-      <div className="w-2/3 p-4 flex flex-col justify-between">
+
+      {/* Content Section */}
+      <div className="w-3/5 p-4 flex flex-col justify-between">
         <div>
-          <div className="flex justify-between items-start">
-            <h2 className="text-xl font-bold mb-1">
+          {/* Header */}
+          <div className="flex justify-between items-start gap-2">
+            <h2 className="text-lg font-bold text-gray-900 line-clamp-1">
               {propertyLink ? (
                 <Link
                   href={propertyLink}
-                  className="hover:underline hover:text-blue-600"
+                  className="hover:text-primary-600 transition-colors"
                   scroll={false}
                 >
                   {property.name}
@@ -56,49 +64,55 @@ const CardCompact = ({
             </h2>
             {showFavoriteButton && (
               <button
-                className="bg-white rounded-full p-1"
+                className="bg-gray-50 hover:bg-gray-100 rounded-full p-2 transition-colors"
                 onClick={onFavoriteToggle}
               >
                 <Heart
-                  className={`w-4 h-4 ${
-                    isFavorite ? "text-red-500 fill-red-500" : "text-gray-600"
+                  className={`w-4 h-4 transition-colors ${
+                    isFavorite ? "text-red-500 fill-red-500" : "text-gray-400 hover:text-gray-600"
                   }`}
                 />
               </button>
             )}
           </div>
-          <p className="text-gray-600 mb-1 text-sm">
+
+          {/* Location & Rating */}
+          <p className="text-gray-600 mb-2 text-sm line-clamp-1">
             {property?.location?.address}, {property?.location?.city}
           </p>
-          <div className="flex text-sm items-center">
-            <Star className="w-3 h-3 text-yellow-400 mr-1" />
-            <span className="font-semibold">
+          <div className="inline-flex items-center bg-yellow-50 rounded-full px-2.5 py-1">
+            <Star className="w-3.5 h-3.5 text-yellow-400 mr-1" />
+            <span className="font-medium text-gray-700">
               {property.averageRating.toFixed(1)}
             </span>
-            <span className="text-gray-600 ml-1">
+            <span className="text-gray-500 text-sm ml-1">
               ({property.numberOfReviews})
             </span>
           </div>
         </div>
-        <div className="flex justify-between items-center text-sm">
-          <div className="flex gap-2 text-gray-600">
-            <span className="flex items-center">
-              <Bed className="w-4 h-4 mr-1" />
-              {property.beds}
+
+        {/* Footer */}
+        <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+          {/* Amenities */}
+          <div className="flex gap-3 text-gray-600 text-sm">
+            <span className="flex items-center bg-gray-50 rounded-md px-2 py-1">
+              <Bed className="w-3.5 h-3.5 mr-1 text-gray-500" />
+              <span className="font-medium">{property.beds}</span>
             </span>
-            <span className="flex items-center">
-              <Bath className="w-4 h-4 mr-1" />
-              {property.baths}
+            <span className="flex items-center bg-gray-50 rounded-md px-2 py-1">
+              <Bath className="w-3.5 h-3.5 mr-1 text-gray-500" />
+              <span className="font-medium">{property.baths}</span>
             </span>
-            <span className="flex items-center">
-              <House className="w-4 h-4 mr-1" />
-              {property.squareFeet}
+            <span className="flex items-center bg-gray-50 rounded-md px-2 py-1">
+              <House className="w-3.5 h-3.5 mr-1 text-gray-500" />
+              <span className="font-medium">{property.squareFeet}</span>
             </span>
           </div>
 
-          <p className="text-base font-bold">
+          {/* Price */}
+          <p className="text-base font-bold text-primary-600">
             ${property.pricePerMonth.toFixed(0)}
-            <span className="text-gray-600 text-xs font-normal"> /mo</span>
+            <span className="text-gray-500 text-xs font-normal"> /mo</span>
           </p>
         </div>
       </div>

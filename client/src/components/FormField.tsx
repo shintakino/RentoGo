@@ -86,7 +86,7 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
             placeholder={placeholder}
             {...field}
             rows={3}
-            className={`border-gray-200 p-4 ${inputClassName}`}
+            className={`min-h-[120px] rounded-xl border-gray-200 p-4 focus:border-primary-500 focus:ring-primary-500 transition-colors ${inputClassName}`}
           />
         );
       case "select":
@@ -97,16 +97,16 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
             onValueChange={field.onChange}
           >
             <SelectTrigger
-              className={`w-full border-gray-200 p-4 ${inputClassName}`}
+              className={`w-full h-12 rounded-xl border-gray-200 bg-white hover:bg-gray-50 focus:border-primary-500 focus:ring-primary-500 transition-all ${inputClassName}`}
             >
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
-            <SelectContent className="w-full border-gray-200 shadow">
+            <SelectContent className="w-full border-gray-200 shadow-lg rounded-xl overflow-hidden">
               {options?.map((option) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}
-                  className={`cursor-pointer hover:!bg-gray-100 hover:!text-customgreys-darkGrey`}
+                  className="cursor-pointer py-3 px-4 hover:bg-gray-50 focus:bg-gray-50 transition-colors"
                 >
                   {option.label}
                 </SelectItem>
@@ -116,14 +116,14 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
         );
       case "switch":
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <Switch
               checked={field.value}
               onCheckedChange={field.onChange}
               id={name}
-              className={`text-customgreys-dirtyGrey ${inputClassName}`}
+              className={`data-[state=checked]:bg-primary-600 ${inputClassName}`}
             />
-            <FormLabel htmlFor={name} className={labelClassName}>
+            <FormLabel htmlFor={name} className={`text-gray-700 cursor-pointer ${labelClassName}`}>
               {label}
             </FormLabel>
           </div>
@@ -131,24 +131,22 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
       case "file":
         return (
           <FilePond
-            className={`${inputClassName}`}
+            className={`bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 ${inputClassName}`}
             onupdatefiles={(fileItems) => {
               const files = fileItems.map((fileItem) => fileItem.file);
               field.onChange(files);
             }}
             allowMultiple={true}
-            labelIdle={`Drag & Drop your images or <span class="filepond--label-action">Browse</span>`}
+            labelIdle={`
+              <div class="flex flex-col items-center p-6">
+                <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-gray-600">Drag & Drop your images or</span>
+                <span class="text-primary-600 font-medium hover:text-primary-700 cursor-pointer">Browse</span>
+              </div>
+            `}
             credits={false}
-          />
-        );
-      case "number":
-        return (
-          <Input
-            type="number"
-            placeholder={placeholder}
-            {...field}
-            className={`border-gray-200 p-4 ${inputClassName}`}
-            disabled={disabled}
           />
         );
       case "multi-input":
@@ -166,7 +164,7 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
             type={type}
             placeholder={placeholder}
             {...field}
-            className={`border-gray-200 p-4 ${inputClassName}`}
+            className={`h-12 rounded-xl border-gray-200 focus:border-primary-500 focus:ring-primary-500 transition-colors ${inputClassName}`}
             disabled={disabled}
           />
         );
@@ -179,23 +177,15 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
       name={name}
       defaultValue={initialValue}
       render={({ field }) => (
-        <FormItem
-          className={`${
-            type !== "switch" && "rounded-md"
-          } relative ${className}`}
-        >
+        <FormItem className={`space-y-2 ${className}`}>
           {type !== "switch" && (
             <div className="flex justify-between items-center">
-              <FormLabel className={`text-sm ${labelClassName}`}>
+              <FormLabel className={`text-sm font-medium text-gray-700 ${labelClassName}`}>
                 {label}
               </FormLabel>
-
-              {!disabled &&
-                isIcon &&
-                type !== "file" &&
-                type !== "multi-input" && (
-                  <Edit className="size-4 text-customgreys-dirtyGrey" />
-                )}
+              {!disabled && isIcon && type !== "file" && type !== "multi-input" && (
+                <Edit className="w-4 h-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" />
+              )}
             </div>
           )}
           <FormControl>
@@ -204,12 +194,13 @@ export const CustomFormField: React.FC<FormFieldProps> = ({
               value: field.value !== undefined ? field.value : initialValue,
             })}
           </FormControl>
-          <FormMessage className="text-red-400" />
+          <FormMessage className="text-red-500 text-sm" />
         </FormItem>
       )}
     />
   );
 };
+
 interface MultiInputFieldProps {
   name: string;
   control: any;
@@ -229,9 +220,9 @@ const MultiInputField: React.FC<MultiInputFieldProps> = ({
   });
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {fields.map((field, index) => (
-        <div key={field.id} className="flex items-center space-x-2">
+        <div key={field.id} className="flex items-center gap-2 group">
           <FormField
             control={control}
             name={`${name}.${index}`}
@@ -240,7 +231,7 @@ const MultiInputField: React.FC<MultiInputFieldProps> = ({
                 <Input
                   {...field}
                   placeholder={placeholder}
-                  className={`flex-1 border-none bg-customgreys-darkGrey p-4 ${inputClassName}`}
+                  className={`h-12 rounded-xl bg-gray-50 border-gray-200 focus:border-primary-500 focus:ring-primary-500 transition-colors ${inputClassName}`}
                 />
               </FormControl>
             )}
@@ -250,7 +241,7 @@ const MultiInputField: React.FC<MultiInputFieldProps> = ({
             onClick={() => remove(index)}
             variant="ghost"
             size="icon"
-            className="text-customgreys-dirtyGrey"
+            className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-500"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -261,7 +252,7 @@ const MultiInputField: React.FC<MultiInputFieldProps> = ({
         onClick={() => append("")}
         variant="outline"
         size="sm"
-        className="mt-2 text-customgreys-dirtyGrey"
+        className="w-full h-12 rounded-xl border-dashed border-2 text-gray-600 hover:border-primary-500 hover:text-primary-600 hover:bg-primary-50 transition-all"
       >
         <Plus className="w-4 h-4 mr-2" />
         Add Item

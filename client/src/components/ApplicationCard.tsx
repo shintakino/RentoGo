@@ -11,115 +11,126 @@ const ApplicationCard = ({
     application.property.photoUrls?.[0] || "/placeholder.jpg"
   );
 
-  const statusColor =
-    application.status === "Approved"
-      ? "bg-green-500"
-      : application.status === "Denied"
-      ? "bg-red-500"
-      : "bg-yellow-500";
+  const statusConfig = {
+    Approved: {
+      color: "bg-green-100 text-green-700",
+      icon: "🎉",
+    },
+    Denied: {
+      color: "bg-red-100 text-red-700",
+      icon: "❌",
+    },
+    Pending: {
+      color: "bg-yellow-100 text-yellow-700",
+      icon: "⏳",
+    },
+  };
 
-  const contactPerson =
-    userType === "manager" ? application.tenant : application.manager;
+  const statusStyle = statusConfig[application.status as keyof typeof statusConfig];
+  const contactPerson = userType === "manager" ? application.tenant : application.manager;
 
   return (
-    <div className="border rounded-xl overflow-hidden shadow-sm bg-white mb-4">
-      <div className="flex flex-col lg:flex-row  items-start lg:items-center justify-between px-6 md:px-4 py-6 gap-6 lg:gap-4">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-lg transition-all duration-300 mb-6">
+      <div className="flex flex-col lg:flex-row items-start lg:items-stretch justify-between p-6 gap-8">
         {/* Property Info Section */}
-        <div className="flex flex-col lg:flex-row gap-5 w-full lg:w-auto">
-          <Image
-            src={imgSrc}
-            alt={application.property.name}
-            width={200}
-            height={150}
-            className="rounded-xl object-cover w-full lg:w-[200px] h-[150px]"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={() => setImgSrc("/placeholder.jpg")}
-          />
-          <div className="flex flex-col justify-between">
+        <div className="flex flex-col lg:flex-row gap-6 w-full lg:w-auto">
+          <div className="relative overflow-hidden rounded-xl w-full lg:w-[240px] h-[180px]">
+            <Image
+              src={imgSrc}
+              alt={application.property.name}
+              fill
+              className="object-cover transform hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, 240px"
+              onError={() => setImgSrc("/placeholder.jpg")}
+            />
+          </div>
+          
+          <div className="flex flex-col justify-between flex-grow">
             <div>
-              <h2 className="text-xl font-bold my-2">
+              <h2 className="text-2xl font-display font-bold mb-3 text-gray-900">
                 {application.property.name}
               </h2>
-              <div className="flex items-center mb-2">
-                <MapPin className="w-5 h-5 mr-1" />
+              <div className="flex items-center mb-3 text-gray-600">
+                <MapPin className="w-5 h-5 mr-2 text-primary-500" />
                 <span>{`${application.property.location.city}, ${application.property.location.country}`}</span>
               </div>
             </div>
-            <div className="text-xl font-semibold">
-              ${application.property.pricePerMonth}{" "}
-              <span className="text-sm font-normal">/ month</span>
+            <div className="text-2xl font-bold text-primary-600">
+              ${application.property.pricePerMonth}
+              <span className="text-sm font-normal text-gray-500"> / month</span>
             </div>
           </div>
         </div>
-
-        {/* Divider - visible only on desktop */}
-        <div className="hidden lg:block border-[0.5px] border-primary-200 h-48" />
 
         {/* Status Section */}
-        <div className="flex flex-col justify-between w-full lg:basis-2/12 lg:h-48 py-2 gap-3 lg:gap-0">
+        <div className="flex flex-col justify-between w-full lg:w-72 py-2 bg-gray-50 rounded-xl p-4">
           <div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500">Status:</span>
-              <span
-                className={`px-2 py-1 ${statusColor} text-white rounded-full text-sm`}
-              >
-                {application.status}
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-gray-600 font-medium">Status</span>
+              <span className={`px-4 py-1.5 ${statusStyle.color} rounded-full text-sm font-medium`}>
+                {statusStyle.icon} {application.status}
               </span>
             </div>
-            <hr className="mt-3" />
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Start Date:</span>{" "}
-            {new Date(application.lease?.startDate).toLocaleDateString()}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">End Date:</span>{" "}
-            {new Date(application.lease?.endDate).toLocaleDateString()}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Next Payment:</span>{" "}
-            {new Date(application.lease?.nextPaymentDate).toLocaleDateString()}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Start Date</span>
+                <span className="font-medium">{new Date(application.lease?.startDate).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">End Date</span>
+                <span className="font-medium">{new Date(application.lease?.endDate).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Next Payment</span>
+                <span className="font-medium text-primary-600">{new Date(application.lease?.nextPaymentDate).toLocaleDateString()}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Divider - visible only on desktop */}
-        <div className="hidden lg:block border-[0.5px] border-primary-200 h-48" />
-
         {/* Contact Person Section */}
-        <div className="flex flex-col justify-start gap-5 w-full lg:basis-3/12 lg:h-48 py-2">
-          <div>
-            <div className="text-lg font-semibold">
-              {userType === "manager" ? "Tenant" : "Manager"}
-            </div>
-            <hr className="mt-3" />
+        <div className="flex flex-col w-full lg:w-80 bg-gray-50 rounded-xl p-4">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              {userType === "manager" ? "Tenant Details" : "Manager Details"}
+            </h3>
           </div>
-          <div className="flex gap-4">
-            <div>
+          
+          <div className="flex gap-4 items-start">
+            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-primary-100">
               <Image
                 src="/landing-i1.png"
                 alt={contactPerson.name}
-                width={40}
-                height={40}
-                className="rounded-full mr-2 min-w-[40px] min-h-[40px]"
+                fill
+                className="object-cover"
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="font-semibold">{contactPerson.name}</div>
-              <div className="text-sm flex items-center text-primary-600">
-                <PhoneCall className="w-5 h-5 mr-2" />
+            
+            <div className="flex-grow space-y-3">
+              <div className="font-semibold text-gray-900">{contactPerson.name}</div>
+              <a href={`tel:${contactPerson.phoneNumber}`} 
+                 className="text-sm flex items-center text-gray-600 hover:text-primary-600 transition-colors">
+                <PhoneCall className="w-4 h-4 mr-2" />
                 {contactPerson.phoneNumber}
-              </div>
-              <div className="text-sm flex items-center text-primary-600">
-                <Mail className="w-5 h-5 mr-2" />
+              </a>
+              <a href={`mailto:${contactPerson.email}`}
+                 className="text-sm flex items-center text-gray-600 hover:text-primary-600 transition-colors">
+                <Mail className="w-4 h-4 mr-2" />
                 {contactPerson.email}
-              </div>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      <hr className="my-4" />
-      {children}
+      {children && (
+        <>
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+          <div className="p-6">
+            {children}
+          </div>
+        </>
+      )}
     </div>
   );
 };
